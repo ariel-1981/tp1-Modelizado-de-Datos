@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-# --- 1️⃣ Leer el archivo CSV que está en la misma carpeta ---
+# --- 1️⃣ Leer el archivo CSV ---
 nombre_archivo = input("📄 Ingresá el nombre del archivo CSV (ejemplo: datos.csv): ")
 
 if not os.path.exists(nombre_archivo):
@@ -16,6 +16,7 @@ print("Vista previa del DataFrame:")
 print(df.head())
 
 # --- 2️⃣ Funciones de modificación ---
+
 def agregar_fila(df):
     """Agrega una fila pidiendo al usuario los valores."""
     print("\n👉 Ingresá los valores para una nueva fila:")
@@ -26,6 +27,7 @@ def agregar_fila(df):
     df.loc[len(df)] = nueva_fila
     print("\n✅ Fila agregada correctamente.\n")
     return df
+
 
 def eliminar_fila(df):
     """Elimina una fila por índice."""
@@ -42,14 +44,43 @@ def eliminar_fila(df):
         print("❌ Debes ingresar un número válido.")
     return df
 
+
+def modificar_fila(df):
+    """Permite modificar los valores de una fila existente."""
+    print("\n📋 Índices actuales del DataFrame:")
+    print(df.index.tolist())
+    try:
+        indice = int(input("✏️ Ingresá el índice de la fila que querés modificar: "))
+        if indice not in df.index:
+            print("❌ Índice no encontrado.")
+            return df
+
+        print("\nFila actual:")
+        print(df.loc[indice])
+        print("\n👉 Ingresá los nuevos valores (dejá vacío para mantener el actual):")
+
+        for col in df.columns:
+            valor_actual = df.at[indice, col]
+            nuevo_valor = input(f"{col} (actual: {valor_actual}): ")
+            if nuevo_valor.strip() != "":
+                df.at[indice, col] = nuevo_valor
+
+        print("\n✅ Fila modificada correctamente.\n")
+
+    except ValueError:
+        print("❌ Debes ingresar un número válido.")
+    return df
+
+
 def mostrar_menu_modificacion(df):
     """Menú interactivo para modificar el DataFrame."""
     while True:
         print("\n🔧 Menú de modificaciones:")
         print("1 - Agregar una fila")
         print("2 - Eliminar una fila")
-        print("3 - Agregar columna de ejemplo")
-        print("4 - Ver DataFrame")
+        print("3 - Modificar una fila existente")
+        print("4 - Agregar columna de ejemplo")
+        print("5 - Ver DataFrame")
         print("0 - Terminar modificaciones")
 
         opcion = input("Elegí una opción: ")
@@ -59,15 +90,18 @@ def mostrar_menu_modificacion(df):
         elif opcion == "2":
             df = eliminar_fila(df)
         elif opcion == "3":
+            df = modificar_fila(df)
+        elif opcion == "4":
             df["Nueva_Columna"] = range(1, len(df) + 1)
             print("✅ Columna 'Nueva_Columna' agregada.")
-        elif opcion == "4":
+        elif opcion == "5":
             print(df)
         elif opcion == "0":
             break
         else:
             print("❌ Opción inválida.")
     return df
+
 
 # --- 3️⃣ Ejecutar modificaciones ---
 df = mostrar_menu_modificacion(df)
